@@ -25,10 +25,12 @@ jobs:
         pip install pytest pytest-html requests
 
     - name: Run tests with pytest
+      working-directory: ./api-tests  # ← ДОБАВЬТЕ ЭТО
       run: pytest test_api.py -v --tb=short
 
     - name: Generate HTML report
       if: always()
+      working-directory: ./api-tests  # ← И ЭТО
       run: pytest test_api.py -v --html=report.html --self-contained-html || true
 
     - name: Upload report
@@ -36,4 +38,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: pytest-report
-        path: report.html
+        path: api-tests/report.html  # ← И ПУТЬ ЗДЕСЬ
