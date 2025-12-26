@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.8, 3.9, 3.10, 3.11]
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']  # ✅ Добавлена 3.12, кавычки
 
     steps:
       - name: Checkout code
@@ -28,13 +28,23 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest pytest-html  # ✅ Явно указываем нужные пакеты
 
       - name: Run tests with pytest
         run: |
-          python -m pytest ./Tests_api.py -v --html=report-${{ matrix.python-version }}.html
+          python -m pytest ./Tests_api.py -v --html=report-${{ matrix.python-version }}.html --self-contained-html
 
       - name: Upload test report
         uses: actions/upload-artifact@v4
+        if: always()  # ✅ Загружает отчет даже если тесты упали
         with:
           name: test-report-python-${{ matrix.python-version }}
           path: report-${{ matrix.python-version }}.html
+          retention-days: 30  # ✅ Хранит 30 дней
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pytest-results-${{ matrix.python-version }}
+          path: .pytest_cache/
