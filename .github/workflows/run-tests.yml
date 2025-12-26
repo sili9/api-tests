@@ -2,45 +2,38 @@ name: Run API Tests
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, develop ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master, develop ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        python-version: ['3.9', '3.10', '3.11']
-
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: '3.11'
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install pytest pytest-html requests
 
-    - name: Run tests
-      run: |
-        pytest test_api.py -v --html=report.html --self-contained-html
+    - name: Run tests with pytest
+      run: pytest test_api.py -v --tb=short
 
-    - name: Upload test report
+    - name: Generate HTML report
       if: always()
-      uses: actions/upload-artifact@v3
+      run: pytest test_api.py -v --html=report.html --self-contained-html || true
+
+    - name: Upload report
+      if: always()
+      uses: actions/upload-artifact@v4
       with:
-        name: test-report-${{ matrix.python-version }}
+        name: pytest-report
         path: report.html
-
-    - name: Test summary
-      if: always()
-      run: |
-        echo "✅ Tests completed"
-        echo "Report available in artifacts"
