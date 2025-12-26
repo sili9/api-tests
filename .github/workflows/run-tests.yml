@@ -27,12 +27,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
-
+          python -m pip install pytest requests pytest-html
 
       - name: Run tests with pytest
         run: |
-          python -m pytest tests/ -v --html=report-${{ matrix.python-version }}.html
+          python -m pytest Tests_api.py -v --html=report-${{ matrix.python-version }}.html
 
       - name: Upload test report
         uses: actions/upload-artifact@v4
