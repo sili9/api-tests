@@ -31,7 +31,8 @@ jobs:
 
       - name: Run tests with pytest
         run: |
-         python -m pytest ./Tests_api.py -v --html=report-${{ matrix.python-version }}.html
+          python -m pytest ./Tests_api.py -v --html=report-${{ matrix.python-version }}.html
+
 
       - name: Upload test report
         uses: actions/upload-artifact@v4
