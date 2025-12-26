@@ -32,7 +32,7 @@ jobs:
 
       - name: Run tests with pytest
         run: |
-          python -m pytest ./Tests_api.py -v --html=report-${{ matrix.python-version }}.html --self-contained-html
+          python -m pytest ./tests_api.py -v --html=report-${{ matrix.python-version }}.html --self-contained-html
 
       - name: Upload test report
         uses: actions/upload-artifact@v4
